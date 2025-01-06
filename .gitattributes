@@ -6,3 +6,9 @@
 
 # Treat .cmd files as text files with Windows-style line endings
 *.cmd text eol=crlf
+
+# All .jar files are treated as binary files
+*.jar binary
+
+# Run all .jar files through Git LFS
+*.jar filter=lfs diff=lfs merge=lfs -text
