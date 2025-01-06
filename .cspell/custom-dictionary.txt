@@ -1,3 +1,27 @@
 # Custom Dictionary Words
+Aout
+Areobf
+assetmover
+Binpatched
+Cleanroom
+cleanroommc
+configanytime
+coremod
+deobf
+Dfml
+Dmixin
+FMLAT
+foojay
+gtnewhorizons
+GTNH
 Highres
 jvmargs
+mcmeta
+mcmod
+mixinbooter
+refmap
+reobf
+Reobfuscated
+retrofuturagradle
+rong
+srgify
