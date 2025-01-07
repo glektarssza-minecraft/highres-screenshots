@@ -1,0 +1,236 @@
+import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
+
+plugins {
+    id("java")
+    id("java-library")
+    id("maven-publish")
+    id("eclipse")
+    id("com.gtnewhorizons.retrofuturagradle") version "1.4.1"
+}
+
+version = project.mod_version
+group = project.mod_group
+archivesBaseName = project.archive_base_name
+
+java {}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+    create("runtimeOnlyNonPublishable") {
+        description = "Runtime only dependencies that are not published alongside the jar"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+
+    create("devOnlyNonPublishable") {
+        description = "Runtime and compile-time dependencies that are not published alongside the jar (compileOnly + runtimeOnlyNonPublishable)"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+    compileOnly.extendsFrom(devOnlyNonPublishable)
+    runtimeOnlyNonPublishable.extendsFrom(devOnlyNonPublishable)
+    runtimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
+    testRuntimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
+}
+
+minecraft {
+    mcVersion = project.minecraft_version
+    def args = ["-ea:${project.group}"]
+    if (project.use_coremod.toBoolean()) {
+        args << '-Dfml.coreMods.load=' + coremod_plugin_class_name
+    }
+    if (project.use_mixins.toBoolean()) {
+        args << '-Dmixin.hotSwap=true'
+        args << '-Dmixin.checks.interfaces=true'
+        args << '-Dmixin.debug.export=true'
+    }
+    extraRunJvmArguments.addAll(args)
+
+    useDependencyAccessTransformers = true
+
+    injectedTags.put("MOD_ID", project.mod_id)
+    injectedTags.put("MOD_NAME", project.mod_name)
+    injectedTags.put("MOD_VERSION", project.mod_version)
+    injectedTags.put("MOD_DEPENDENCIES", '')
+}
+
+tasks.injectTags.configure {
+    outputClassName.set("${project.group}.${project.mod_id}.Tags")
+}
+
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Cleanroom Maven'
+                url = 'https://maven.cleanroommc.com'
+            }
+        }
+        filter {
+            includeGroup 'com.cleanroommc'
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        name = 'SpongePowered Maven'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    mavenLocal()
+}
+
+dependencies {
+    if (project.use_assetmover.toBoolean()) {
+        implementation 'com.cleanroommc:assetmover:2.5'
+    }
+    if (project.use_mixins.toBoolean()) {
+        def refMapName = 'mixins.' + project.archive_base_name + 'refmap.json'
+        def mixinProviderSpec = 'zone.rong:mixinbooter:10.2'
+
+        // Common
+        annotationProcessor('org.ow2.asm:asm-debug-all:5.2')
+        annotationProcessor('com.google.guava:guava:33.4.0-jre')
+        annotationProcessor('com.google.code.gson:gson:2.11.0')
+
+        // Mixins
+        implementation(modUtils.enableMixins(mixinProviderSpec, refMapName))
+        api(mixinProviderSpec) { transitive = false }
+        annotationProcessor(mixinProviderSpec) { transitive = false }
+    }
+
+    // Runtime-only mods (things we like for easier testing!)
+    runtimeOnlyNonPublishable rfg.deobf('curse.maven:had-enough-items-557549:5815590')
+    runtimeOnlyNonPublishable rfg.deobf('curse.maven:configanytime-870276:5212709')
+    runtimeOnlyNonPublishable rfg.deobf('curse.maven:universal-tweaks-705000:5529764')
+
+    // Runtime-only mods (for testing various mod compatibility)
+    // if (project.hasProperty('use_MOD_NAME') && project.use_MOD_NAME.toBoolean()) {
+    // 	devOnlyNonPublishable rfg.deobf('curse.maven:MOD_NAME-PROJECT_ID:FILE_ID')
+    // }
+
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.11.4'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+def mixinConfigRefMap = 'mixins.' + project.mod_id + '.refmap.json'
+def mixinTmpDir = buildDir.path + File.separator + 'tmp' + File.separator + 'mixins'
+def refMap = "${mixinTmpDir}" + File.separator + mixinConfigRefMap
+def mixinSrg = "${mixinTmpDir}" + File.separator + "mixins.srg"
+
+if (project.use_mixins.toBoolean()) {
+    tasks.named("reobfJar", ReobfuscatedJar).configure {
+        extraSrgFiles.from(mixinSrg)
+    }
+
+    tasks.named("compileJava", JavaCompile).configure {
+        doFirst {
+            new File(mixinTmpDir).mkdirs()
+        }
+        options.compilerArgs += [
+                "-AreobfSrgFile=${tasks.reobfJar.srg.get().asFile}",
+                "-AoutSrgFile=${mixinSrg}",
+                "-AoutRefMapFile=${refMap}",
+        ]
+    }
+}
+
+if (project.use_access_transformer.toBoolean()) {
+    for (File at : sourceSets.getByName("main").resources.files) {
+        if (at.name.toLowerCase().endsWith("_at.cfg")) {
+            tasks.deobfuscateMergedJarToSrg.accessTransformerFiles.from(at)
+            tasks.srgifyBinpatchedJar.accessTransformerFiles.from(at)
+        }
+    }
+}
+
+String projectPropOrDefault(String propName, String defaultValue) {
+    (project.hasProperty(propName) && project.getProperty(propName)) ? project.getProperty(propName) : defaultValue
+}
+
+processResources {
+    inputs.property 'mod_version', project.version
+    inputs.property 'minecraft_version', project.minecraft.version
+
+    filesMatching(['mcmod.info', 'pack.mcmeta', 'mixins.*.json']) { fcd ->
+        fcd.expand(
+                'mod_id': project.mod_id,
+                'mod_name': project.mod_name,
+                'mod_version': project.version,
+                'mod_author': project.mod_author,
+                'mod_description': projectPropOrDefault('mod_description', ''),
+                'mod_credits': projectPropOrDefault('mod_credits', ''),
+                'mod_url': projectPropOrDefault('mod_url', ''),
+                'mod_update_url': projectPropOrDefault('mod_update_url', ''),
+                'minecraft_version': project.minecraft.version
+        )
+    }
+
+    if (project.use_access_transformer.toBoolean()) {
+        rename '(.+_at.cfg)', 'META-INF/$1'
+    }
+
+    if (project.use_mixins.toBoolean()) {
+        from refMap
+        dependsOn("compileJava")
+    }
+}
+jar {
+    manifest {
+        def attribute_map = [:]
+        if (project.use_coremod.toBoolean()) {
+            attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+            if (project.include_mod.toBoolean()) {
+                attribute_map['FMLCorePluginContainsFMLMod'] = true
+                attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == "build"
+            }
+        }
+        if (project.use_access_transformer.toBoolean()) {
+            attribute_map['FMLAT'] = project.mod_id + '_at.cfg'
+        }
+        attributes(attribute_map)
+    }
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    from(provider {
+        configurations.embed.collect {
+            if (it.isDirectory()) {
+                return it
+            } else {
+                zipTree(it).matching {
+                    exclude '**/LICENSE*', 'META-INF/**'
+                }
+            }
+        }
+    })
+}
+
+sourceSets {
+    generator {
+        java {
+            srcDir 'src/generator/java'
+        }
+    }
+    api {
+        java {
+            srcDir 'src/api/java'
+        }
+    }
+}
