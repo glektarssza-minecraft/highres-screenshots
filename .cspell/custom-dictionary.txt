@@ -7,11 +7,13 @@ Cleanroom
 cleanroommc
 configanytime
 coremod
+decomp
 deobf
 Dfml
 Dmixin
 FMLAT
 foojay
+gradlew
 gtnewhorizons
 GTNH
 Highres
@@ -26,3 +28,4 @@ Reobfuscated
 retrofuturagradle
 rong
 srgify
+temurin
