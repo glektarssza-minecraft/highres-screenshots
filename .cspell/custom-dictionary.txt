@@ -19,6 +19,7 @@ jvmargs
 mcmeta
 mcmod
 mixinbooter
+modid
 refmap
 reobf
 Reobfuscated
