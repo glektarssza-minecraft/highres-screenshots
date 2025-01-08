@@ -17,7 +17,7 @@ RUN apt update -y && \
 # Install things needed to install Java versions we'll need
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt update -y && \
-    apt install -y --no-install-recommends ca-certificates wget apt-transport-https gpg && \
+    apt install -y --no-install-recommends ca-certificates wget apt-transport-https gnupg2 && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
