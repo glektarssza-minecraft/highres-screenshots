@@ -1,0 +1,12 @@
+{
+    "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+    "name": "Main devcontainer",
+    "hostRequirements": {
+        "cpus": 2,
+        "memory": "4gb",
+        "storage": "32gb"
+    },
+    "build": {
+        "dockerfile": "Dockerfile"
+    }
+}
