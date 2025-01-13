@@ -28,7 +28,7 @@ write_debug () {
 # Check if a package is installed.
 dpkg_check_installed () {
     write_debug "Checking if '$1' is installed via dpkg-query...";
-    dpkg-query -l $1 2>&1 > /dev/null;
+    dpkg-query -s $1 2>&1 > /dev/null;
     if [ $? -eq 0 ]; then
         write_debug "Package is installed";
         return 0;
