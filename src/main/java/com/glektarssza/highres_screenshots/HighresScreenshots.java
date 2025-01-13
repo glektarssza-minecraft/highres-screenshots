@@ -30,7 +30,8 @@ public class HighresScreenshots {
     @Mod.EventHandler
     public void OnPreInit(FMLPreInitializationEvent event) {
         LOGGER = event.getModLog();
-        LOGGER.info("Pre-initializing HighresScreenshot...");
+        LOGGER.info(new StringBuilder().append("Pre-initializing ")
+            .append(Tags.MOD_NAME).append("...").toString());
         // TODO
     }
 
@@ -41,7 +42,8 @@ public class HighresScreenshots {
      */
     @Mod.EventHandler
     public void OnPreInit(FMLPostInitializationEvent event) {
-        LOGGER.info("Post-initializing HighresScreenshot...");
+        LOGGER.info(new StringBuilder().append("Post-initializing ")
+            .append(Tags.MOD_NAME).append("...").toString());
         // TODO
     }
 }
