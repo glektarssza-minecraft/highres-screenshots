@@ -25,7 +25,10 @@
         },
         "./features/apt-git": {},
         "./features/apt-git-lfs": {},
-        "./features/apt-sudo": {}
+        "./features/apt-sudo": {},
+        "./features/apt-adoptium": {
+            "packages": "temurin-8-jdk temurin-21-jdk"
+        }
     },
     "overrideFeatureInstallOrder": [
         "./features/create-user",
