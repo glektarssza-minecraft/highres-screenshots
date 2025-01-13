@@ -20,4 +20,13 @@ public class ConfigItems {
      * The type of file to save the screenshot as.
      */
     public ScreenshotType screenshotType;
+
+    /**
+     * Create a new instance.
+     */
+    public ConfigItems() {
+        this.screenshotWidth = 1280;
+        this.screenshotHeight = 720;
+        this.screenshotType = ScreenshotType.PNG;
+    }
 }
