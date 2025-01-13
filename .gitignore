@@ -37,6 +37,12 @@ tags
 ### Undo Persistence ###
 [._]*.un~
 
+## Eclipse ##
+### General ###
+.settings/
+.project
+.classpath
+
 # Logs #
 *.log*
 
