@@ -2,6 +2,10 @@
     "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
     "name": "Main devcontainer",
     "remoteUser": "vscode",
+    "runArgs": [
+        "-u",
+        "1000"
+    ],
     "build": {
         "dockerfile": "Dockerfile"
     },
