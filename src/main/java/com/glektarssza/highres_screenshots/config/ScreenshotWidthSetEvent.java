@@ -2,6 +2,9 @@ package com.glektarssza.highres_screenshots.config;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+/**
+ * An event indicating the width of screenshot to take was updated.
+ */
 public class ScreenshotWidthSetEvent extends Event {
     /**
      * The old screenshot width.
