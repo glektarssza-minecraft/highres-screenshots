@@ -1,0 +1,37 @@
+{
+    "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+    "name": "Main devcontainer",
+    "remoteUser": "vscode",
+    "runArgs": [
+        "-u",
+        "1000"
+    ],
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "hostRequirements": {
+        "cpus": 2,
+        "memory": "4gb",
+        "storage": "32gb"
+    },
+    "features": {
+        "./features/create-user": {
+            "username": "vscode"
+        },
+        "./features/apt-zsh": {},
+        "./features/oh-my-zsh": {
+            "theme": "blinks_custom",
+            "plugins": "debian git git-lfs"
+        },
+        "./features/apt-git": {},
+        "./features/apt-git-lfs": {},
+        "./features/apt-sudo": {},
+        "./features/apt-adoptium": {
+            "packages": "temurin-8-jdk temurin-21-jdk"
+        }
+    },
+    "overrideFeatureInstallOrder": [
+        "./features/create-user",
+        "./features/oh-my-zsh"
+    ]
+}
