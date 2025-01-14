@@ -1,19 +1,40 @@
 package com.glektarssza.highres_screenshots.config;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.nio.file.Watchable;
+import java.nio.file.WatchEvent.Kind;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import com.glektarssza.highres_screenshots.ScreenshotType;
+import com.glektarssza.highres_screenshots.Tags;
 
 /**
  * The main configuration for the mod.
  */
+@Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class Config {
+    /**
+     * The main Forge configuration file watch service.
+     */
+    @Nullable
+    private static WatchService forgeWatchService;
+
     /**
      * The main Forge configuration object.
      */
@@ -122,5 +143,67 @@ public final class Config {
         }
         MinecraftForge.EVENT_BUS
             .post(new ScreenshotTypeSetEvent(oldType, type));
+    }
+
+    /**
+     * Initialize the file system watcher.
+     *
+     * @return {@code true} if the operation completed successfully;
+     *         {@code false} otherwise.
+     *
+     * @throws IOException Thrown if a new file system watch service cannot be
+     *         created or a file system watcher for the main Forge configuration
+     *         file could not be registered.
+     */
+    public static boolean initFileWatcher() throws IOException {
+        if (forgeConfig == null) {
+            return false;
+        }
+        if (forgeWatchService == null) {
+            forgeWatchService = FileSystems.getDefault().newWatchService();
+        }
+        @SuppressWarnings("null")
+        Path configPath = forgeConfig.getConfigFile().toPath().getParent();
+        configPath.register(forgeWatchService,
+            StandardWatchEventKinds.ENTRY_CREATE,
+            StandardWatchEventKinds.ENTRY_MODIFY,
+            StandardWatchEventKinds.ENTRY_DELETE);
+        return true;
+    }
+
+    /**
+     * Handle some logic every game tick.
+     *
+     * @param ev The tick event.
+     */
+    @SuppressWarnings("null")
+    @SubscribeEvent
+    public static void onTick(TickEvent ev) {
+        if (forgeWatchService != null && forgeConfig != null) {
+            WatchKey key = forgeWatchService.poll();
+            if (key != null) {
+                Watchable w = key.watchable();
+                if (w instanceof Path) {
+                    Path p = (Path) w;
+                    if (p.equals(forgeConfig.getConfigFile().toPath())) {
+                        List<WatchEvent<?>> evts = key
+                            .pollEvents();
+                        for (WatchEvent<?> e : evts) {
+                            Kind<?> k = e.kind();
+                            if (k
+                                .equals(StandardWatchEventKinds.ENTRY_CREATE)) {
+                                forgeConfig.load();
+                            } else if (k
+                                .equals(StandardWatchEventKinds.ENTRY_DELETE)) {
+                                forgeConfig.save();
+                            } else if (k
+                                .equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+                                forgeConfig.load();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
