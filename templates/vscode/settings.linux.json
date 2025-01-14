@@ -32,7 +32,7 @@
     "java.codeGeneration.generateComments": false,
     "java.codeGeneration.hashCodeEquals.useInstanceof": true,
     "java.codeGeneration.hashCodeEquals.useJava7Objects": true,
-    "java.codeGeneration.toString.codeStyle": "STRING_BUILDER_CHAINED",
+    "java.codeGeneration.toString.codeStyle": "STRING_FORMAT",
     "java.codeGeneration.useBlocks": true,
     "java.compile.nullAnalysis.mode": "automatic",
     "java.format.enabled": true,
@@ -51,5 +51,14 @@
     ],
     "terminal.integrated.env.linux": {
         "JAVA_HOME": "/lib/jvm/temurin-8-jdk-amd64/"
-    }
+    },
+    "cSpell.ignorePaths": [
+        "vscode-extension",
+        ".git/{info,lfs,logs,refs,objects}/**",
+        ".git/{index,*refs,*HEAD}",
+        ".vscode",
+        ".vscode-insiders",
+        "build",
+        "templates/vscode"
+    ]
 }
