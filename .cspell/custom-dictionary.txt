@@ -25,10 +25,13 @@ mcmod
 minecraftforge
 mixinbooter
 modid
+mojang
 refmap
 reobf
 Reobfuscated
 retrofuturagradle
 rong
+spongepowered
 srgify
 temurin
+vmargs
