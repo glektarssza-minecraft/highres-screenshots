@@ -22,6 +22,7 @@ Highres
 jvmargs
 mcmeta
 mcmod
+minecraftforge
 mixinbooter
 modid
 refmap
