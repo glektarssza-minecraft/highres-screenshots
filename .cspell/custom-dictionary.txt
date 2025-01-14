@@ -12,6 +12,7 @@ decomp
 deobf
 Dfml
 Dmixin
+evts
 FMLAT
 foojay
 gradlew
@@ -21,12 +22,16 @@ Highres
 jvmargs
 mcmeta
 mcmod
+minecraftforge
 mixinbooter
 modid
+mojang
 refmap
 reobf
 Reobfuscated
 retrofuturagradle
 rong
+spongepowered
 srgify
 temurin
+vmargs
