@@ -1,19 +1,14 @@
 package com.glektarssza.highres_screenshots.utils.config;
 
 import java.io.File;
-import java.util.Arrays;
 
 import javax.annotation.Nullable;
-
-import org.lwjgl.util.Color;
 
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.common.config.Config.Type;
 
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
-import it.unimi.dsi.fastutil.booleans.BooleanArrays;
 
 /**
  * A thin wrapper around the Forge configuration object.
