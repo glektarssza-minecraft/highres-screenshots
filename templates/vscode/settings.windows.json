@@ -11,9 +11,9 @@
     "[java]": {
         "editor.defaultFormatter": "redhat.java"
     },
-    "java.jdt.ls.java.home": "/lib/jvm/temurin-21-jdk-amd64/",
-    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable",
-    "java.import.gradle.java.home": "/lib/jvm/temurin-8-jdk-amd64/",
+    "java.jdt.ls.java.home": "C:/Users/test/scoop/apps/temurin21-jdk/current/",
+    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms512m -Xlog:disable",
+    "java.import.gradle.java.home": "C:/Users/test/scoop/apps/temurin8-jdk/current/",
     "java.completion.enabled": true,
     "java.completion.importOrder": [
         "#",
@@ -48,7 +48,7 @@
     "java.server.launchMode": "Standard",
     "java.diagnostic.filter": ["**/build/**"],
     "terminal.integrated.env.linux": {
-        "JAVA_HOME": "/lib/jvm/temurin-8-jdk-amd64/"
+        "JAVA_HOME": "C:/Users/test/scoop/apps/temurin8-jdk/current/"
     },
     "cSpell.ignorePaths": [
         "vscode-extension",
