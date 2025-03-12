@@ -46,9 +46,7 @@
     "java.saveActions.organizeImports": true,
     "java.silentNotification": true,
     "java.server.launchMode": "Standard",
-    "java.diagnostic.filter": [
-        "**/build/**"
-    ],
+    "java.diagnostic.filter": ["**/build/**"],
     "terminal.integrated.env.linux": {
         "JAVA_HOME": "/lib/jvm/temurin-8-jdk-amd64/"
     },
